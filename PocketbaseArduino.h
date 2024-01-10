@@ -32,6 +32,43 @@ public:
         return pb.getOneRecord(collectionName, record);
     }
 
+    /**
+     * Creates a single, new record in the Pocketbase collection.
+     *
+     * @param jsonData The JSON data for the new record.
+     * @return True if the record was successfully created, false otherwise.
+     */
+    bool create(const char *jsonData)
+    {
+        return pb.addRecord(collectionName, jsonData);
+    }
+
+    /**
+     * @brief Updates a single, new record in the Pocketbase collection.
+     *
+     * This function updates a record in the Pocketbase collection with the provided JSON data.
+     *
+     * @param jsonData The JSON data to update the record with.
+     * @return True if the record was successfully updated, false otherwise.
+     */
+    bool update(const char *jsonData)
+    {
+        return pb.updateRecord(collectionName, jsonData);
+    }
+
+    /**
+     * @brief Deletes a single, new record in the Pocketbase collection.
+     *
+     * This function deletes a record in the Pocketbase collection with the provided JSON data.
+     *
+     * @param jsonData The JSON data to update the record with.
+     * @return True if the record was successfully updated, false otherwise.
+     */
+    bool delete(const char *jsonData)
+    {
+        return pb.deleteRecord(collectionName, jsonData);
+    }
+
 private:
     PocketBase &pb;             ///< Reference to the associated PocketBase object.
     const char *collectionName; ///< The name of the collection.
