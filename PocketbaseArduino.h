@@ -6,64 +6,67 @@
 
 /**
  * @class PocketbaseCollection
- * @brief Represents a collection of records in PocketBase.
+ * @brief Represents a collection in the PocketBase database.
  *
- * This class provides methods to interact with a specific collection of records in PocketBase.
+ * This class provides methods to interact with a specific collection in the PocketBase database.
  * It allows retrieving, creating, updating, and deleting records in the collection.
  */
 class PocketbaseCollection
-    /**
-     * @brief Represents a collection of records in the PocketBase database.
-     *
-     * This class provides methods to interact with a specific collection in the PocketBase database.
-     * It allows retrieving, creating, updating, and deleting records in the collection.
-     */
+
     class PocketbaseCollection
 {
 public:
-    /**
-     * @brief Constructs a PocketbaseCollection object.
-     *
-     * @param pb The PocketBase object to associate with the collection.
-     * @param collectionName The name of the collection.
-     */
     PocketbaseCollection(PocketBase &pb, const char *collectionName)
         : pb(pb), collectionName(collectionName) {}
 
-    /**
-     * @brief Retrieves a single record from the collection.
-     *
-     * @param record The identifier of the record to retrieve.
-     * @return The JSON representation of the retrieved record.
-     */
-    const String getOne(const char *record);
+    const String getOne(const char *recordId)
+    {
+        try
+        {
+            // Construct the API endpoint URL
+            String apiUrl = pb.getBaseUrl() + "/api/collections/" + collectionName + "/records/" + recordId;
 
-    /**
-     * @brief Creates a new record in the collection.
-     *
-     * @param jsonData The JSON data representing the new record.
-     * @param fieldName The name of the field associated with the file. (optional)
-     * @param fileName The name of the file to upload. (optional)
-     * @param fileStream The stream containing the file data. (optional)
-     * @return The JSON representation of the created record.
-     */
+            // Perform the GET request to retrieve the record
+            // Use your PocketBase library to make the GET request, and store the response in 'result'
+            // For example, assuming pb has a getRecord method in your PocketBase library:
+            String result = pb.getRecord(apiUrl);
+
+            // Parse the result to check for error responses
+            DynamicJsonDocument jsonResponse(1024); // Adjust the size based on your needs
+            deserializeJson(jsonResponse, result);
+
+            int code = jsonResponse["code"].as<int>();
+
+            // Handle possible error responses
+            if (code == 404)
+            {
+                // Handle 404 error
+                Serial.println("Error: The requested resource wasn't found.");
+            }
+            else if (code == 403)
+            {
+                // Handle 403 error
+                Serial.println("Error: Only admins can access this action.");
+            }
+            else
+            {
+                // Return the result
+                return result;
+            }
+        }
+        catch (const std::exception &e)
+        {
+            Serial.println("Exception occurred during the request: " + String(e.what()));
+        }
+
+        // Return an empty string in case of an error
+        return "";
+    }
+
     const String create(const char *jsonData, const char *fieldName = nullptr, const char *fileName = nullptr, Stream *fileStream = nullptr);
 
-    /**
-     * @brief Updates an existing record in the collection.
-     *
-     * @param jsonData The JSON data representing the updated record.
-     * @return The JSON representation of the updated record.
-     */
     const String update(const char *jsonData);
 
-    /**
-     * @brief Deletes a record from the collection and optionally deletes associated files.
-     *
-     * @param recordId The ID of the record to delete.
-     * @param filesToDelete An optional array of filenames to delete from file fields.
-     * @return The JSON representation of the deleted record.
-     */
     const String deleteRecord(const char *recordId, const char *filesToDelete[] = nullptr);
 
 private:
@@ -71,29 +74,12 @@ private:
     const char *collectionName; // The name of the collection
 };
 
-/**
- * @brief Represents a Pocketbase Arduino client.
- *
- * This class provides a convenient way to interact with the Pocketbase API using an Arduino device.
- * It allows you to perform operations such as creating collections and accessing data within those collections.
- */
 class PocketbaseArduino
 {
 public:
-    /**
-     * @brief Constructs a PocketbaseArduino object with the specified base URL.
-     *
-     * @param BASE_URL The base URL of the Pocketbase API.
-     */
     PocketbaseArduino(const char *BASE_URL)
         : pb(BASE_URL) {}
 
-    /**
-     * @brief Returns a PocketbaseCollection object for the specified collection name.
-     *
-     * @param collectionName The name of the collection.
-     * @return PocketbaseCollection The PocketbaseCollection object for the specified collection.
-     */
     PocketbaseCollection collection(const char *collectionName)
     {
         return PocketbaseCollection(pb, collectionName);
