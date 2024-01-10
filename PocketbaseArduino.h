@@ -64,7 +64,7 @@ public:
      * @param jsonData The JSON data to update the record with.
      * @return True if the record was successfully updated, false otherwise.
      */
-    bool delete(const char *jsonData)
+    bool deleteRecord(const char *jsonData)
     {
         return pb.deleteRecord(collectionName, jsonData);
     }
