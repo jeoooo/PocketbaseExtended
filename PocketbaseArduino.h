@@ -157,7 +157,10 @@ public:
      *
      * @return          The fetched record as a String object.
      */
-    const String getOne(const char *recordId, const char *expand = nullptr, const char *fields = nullptr);
+    const String getOne(
+        const char *recordId,
+        const char *expand = nullptr,
+        const char *fields = nullptr);
 
     /**
      * @brief Creates a single, new record in the Pocketbase collection.
@@ -169,7 +172,11 @@ public:
      *
      * @return              A JSON string representing the created record if successful, an empty string otherwise.
      */
-    const String create(const char *jsonData, const char *id = nullptr, const char *expand = nullptr, const char *fields = nullptr);
+    const String create(
+        const char *jsonData,
+        const char *id = nullptr,
+        const char *expand = nullptr,
+        const char *fields = nullptr);
 
     // TODO: REFACTOR
     const String update(const char *jsonData);
