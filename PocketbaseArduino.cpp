@@ -1,7 +1,25 @@
 #include "PocketbaseArduino.h"
-// cpp file - implementation
+#include <ESP8266HTTPClient.h>
 
-// implementation here
+// PocketbaseArduino Implementation
+
+/**
+ * @brief Constructs a PocketbaseArduino object with the specified base URL.
+ *
+ * @param BASE_URL The base URL of the PocketBase API.
+ */
+PocketbaseArduino::PocketbaseArduino(const char *BASE_URL) : pb(BASE_URL) {}
+
+/**
+ * @brief Creates a PocketbaseCollection object for the specified collection name.
+ *
+ * @param collectionName The name of the collection.
+ * @return PocketbaseCollection The PocketbaseCollection object.
+ */
+PocketbaseCollection PocketbaseArduino::collection(const char *collectionName)
+{
+    return PocketbaseCollection(pb, collectionName);
+}
 
 /**
  * @brief Fetches a single record from a Pocketbase collection.
@@ -14,7 +32,7 @@
  * @param fields (Optional) A string specifying the fields to include in the response.
  * @return The fetched record as a String object.
  */
-const String getOne(const char *recordId, const char *expand = nullptr, const char *fields = nullptr)
+const String PocketbaseCollection::getOne(const char *recordId, const char *expand, const char *fields)
 {
     try
     {
@@ -49,12 +67,12 @@ const String getOne(const char *recordId, const char *expand = nullptr, const ch
         if (code == 404)
         {
             // Handle 404 error
-            throw PocketbaseArduinoException("Error: The requested resource wasn't found.");
+            Serial.println("Error: The requested resource wasn't found.");
         }
         else if (code == 403)
         {
             // Handle 403 error
-            throw PocketbaseArduinoException("Error: Only admins can access this action.");
+            Serial.println("Error: Only admins can access this action.");
         }
         else
         {
@@ -62,14 +80,8 @@ const String getOne(const char *recordId, const char *expand = nullptr, const ch
             return result;
         }
     }
-    catch (const PocketbaseArduinoException &e)
-    {
-        // Handle your custom exception
-        Serial.println(e.what());
-    }
     catch (const std::exception &e)
     {
-        // Handle other standard exceptions
         Serial.println("Exception occurred during the request: " + String(e.what()));
     }
 
@@ -86,7 +98,7 @@ const String getOne(const char *recordId, const char *expand = nullptr, const ch
  * @param fields (Optional) A string specifying the fields to include in the response.
  * @return True if the record was successfully created, false otherwise.
  */
-bool create(const char *jsonData, const char *id = nullptr, const char *expand = nullptr, const char *fields = nullptr)
+const String PocketbaseCollection::create(const char *jsonData, const char *id, const char *expand, const char *fields)
 {
     try
     {
@@ -99,7 +111,8 @@ bool create(const char *jsonData, const char *id = nullptr, const char *expand =
             throw PocketbaseArduinoException("Error: Failed to create record.");
         }
 
-        return success;
+        // If successful, return an empty string (or customize as needed)
+        return "";
     }
     catch (const PocketbaseArduinoException &e)
     {
@@ -112,5 +125,7 @@ bool create(const char *jsonData, const char *id = nullptr, const char *expand =
         Serial.println("Exception occurred during the request: " + String(e.what()));
     }
 
-    return false;
+    return "";
 }
+
+// TODO: Implement update and deleteRecord functions for PocketbaseCollection
