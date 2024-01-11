@@ -19,12 +19,36 @@ public:
     PocketbaseCollection(PocketBase &pb, const char *collectionName)
         : pb(pb), collectionName(collectionName) {}
 
-    const String getOne(const char *recordId)
+    /**
+     * @brief Fetches a single record from a Pocketbase collection.
+     *
+     * This function retrieves a single record from a Pocketbase collection based on the provided record ID.
+     * It allows optional parameters for expanding related fields and selecting specific fields to include in the response.
+     *
+     * @param recordId The ID of the record to fetch.
+     * @param expand (Optional) A string specifying related fields to expand in the response.
+     * @param fields (Optional) A string specifying the fields to include in the response.
+     * @return The fetched record as a String object.
+     */
+    const String getOne(const char *recordId, const char *expand = nullptr, const char *fields = nullptr)
     {
         try
         {
-            // Construct the API endpoint URL
+            // Construct the API endpoint URL with optional expand and fields query parameters
             String apiUrl = pb.getBaseUrl() + "/api/collections/" + collectionName + "/records/" + recordId;
+
+            if (expand != nullptr)
+            {
+                apiUrl += "?expand=" + String(expand);
+                if (fields != nullptr)
+                {
+                    apiUrl += "&fields=" + String(fields);
+                }
+            }
+            else if (fields != nullptr)
+            {
+                apiUrl += "?fields=" + String(fields);
+            }
 
             // Perform the GET request to retrieve the record
             // Use your PocketBase library to make the GET request, and store the response in 'result'
