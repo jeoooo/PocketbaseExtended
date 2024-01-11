@@ -11,6 +11,7 @@
 #include "PocketBase.h" // Assuming you have a PocketBase Arduino library
 
 /**
+ *
  * * *************************************************************************************************************
  * *                                         IMPORTANT:                                                          *
  * *                                                                                                             *
@@ -23,7 +24,8 @@
  * *                                                                                                             *
  * * source: https://docs.arduino.cc/learn/contributions/arduino-creating-library-guide                          *
  * * *************************************************************************************************************
- ***********************************************/
+ *
+ */
 
 /**
  * @brief The PocketbaseArduino class represents an Arduino library for interacting with PocketBase.
