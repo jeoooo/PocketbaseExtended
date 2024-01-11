@@ -1,6 +1,6 @@
 # PocketbaseArduino
 
-Pocketbase + Arduino Wrapper Library for ESP8266/ESP32
+Arduino ESP8266/ESP32 Wrapper Library for Pocketbase
 
 ## Table of Contents
 
