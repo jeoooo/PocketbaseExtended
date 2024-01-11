@@ -35,9 +35,9 @@
 class PocketbaseArduino
 {
 public:
-    PocketbaseArduino(const char *BASE_URL) : pb(BASE_URL) {}
+    PocketbaseArduino(const char *BASE_URL) : pb(BASE_URL);
 
-    PocketbaseCollection collection(const char *collectionName) {}
+    PocketbaseCollection collection(const char *collectionName);
 
 private:
     PocketBase pb;
@@ -57,7 +57,7 @@ public:
      *
      * @param message The error message associated with the exception.
      */
-    PocketbaseArduinoException(const std::string &message) : message(message) {}
+    PocketbaseArduinoException(const std::string &message) : message(message);
 
     /**
      * @brief Returns a C-style string describing the exception.
@@ -92,26 +92,82 @@ public:
         : pb(pb), collectionName(collectionName) {}
 
     /**
+     * @brief Fetchesa paginated records listing
+     *
+     * This function retrieves a paginated record from a Pocketbase collection
+     * It allows optional parameters for page, perPage, sorting, filtering, expanding, querying specific fields, and skipTotal
+     *
+     * @param page      (Optional) The page (aka. offset) of the paginated list (default to 1).
+     * @param perPage   (Optional) The max returned records per page (default to 30).
+     * @param sort      (Optional) Specify the ORDER BY fields.
+     * @param filter    (Optional) Filter expression to filter/search the returned records list (in addition to the collection's listRule)
+     * @param expand    (Optional) Auto expand record relations.
+     * @param fields    (Optional) Comma separated string of the fields to return in the JSON response (by default returns all fields).
+     * @param skipTotal (Optional) If it is set the total counts query will be skipped and the response fields totalItems and totalPages will have -1 value.
+     *                  This could drastically speed up the search queries when the total counters are not needed or cursor based pagination is used.
+     *                  For optimization purposes, it is set by default for the getFirstListItem() and getFullList() SDKs methods.
+     *
+     * @return          A JSON String representing the paginated record from a Pocketbase collection
+     */
+    const String PocketbaseCollection::getList(
+        unsigned int page = 1,
+        unsigned int perPage = 30,
+        const char *sort = nullptr,
+        const char *filter = nullptr,
+        const char *expand = nullptr,
+        const char *fields = nullptr,
+        bool skipTotal = true);
+
+    /**
+     * @brief Fetches all records at once from a Pocketbase Collection
+     *
+     * This function retrieves a paginated record from a Pocketbase collection
+     * It allows optional parameters for page, perPage, sorting, filtering, expanding, querying specific fields, and skipTotal
+     *
+     * @param page      (Optional) The page (aka. offset) of the paginated list (default to 1).
+     * @param perPage   (Optional) The max returned records per page (default to 30).
+     * @param sort      (Optional) Specify the ORDER BY fields.
+     * @param filter    (Optional) Filter expression to filter/search the returned records list (in addition to the collection's listRule)
+     * @param expand    (Optional) Auto expand record relations.
+     * @param fields    (Optional) Comma separated string of the fields to return in the JSON response (by default returns all fields).
+     * @param skipTotal (Optional) If it is set the total counts query will be skipped and the response fields totalItems and totalPages will have -1 value.
+     *                  This could drastically speed up the search queries when the total counters are not needed or cursor based pagination is used.
+     *                  For optimization purposes, it is set by default for the getFirstListItem() and getFullList() SDKs methods.
+     *
+     * @return          A JSON String representing the paginated record from a Pocketbase collection
+     */
+    const String PocketbaseCollection::getFullList(
+        unsigned int page = 1,
+        unsigned int perPage = 30,
+        const char *sort = nullptr,
+        const char *filter = nullptr,
+        const char *expand = nullptr,
+        const char *fields = nullptr,
+        bool skipTotal = true);
+
+    /**
      * @brief Fetches a single record from a Pocketbase collection.
      *
      * This function retrieves a single record from a Pocketbase collection based on the provided record ID.
      * It allows optional parameters for expanding related fields and selecting specific fields to include in the response.
      *
-     * @param recordId The ID of the record to fetch.
-     * @param expand (Optional) A string specifying related fields to expand in the response.
-     * @param fields (Optional) A string specifying the fields to include in the response.
-     * @return The fetched record as a String object.
+     * @param recordId  The ID of the record to fetch.
+     * @param expand    (Optional) A string specifying related fields to expand in the response.
+     * @param fields    (Optional) A string specifying the fields to include in the response.
+     *
+     * @return          The fetched record as a String object.
      */
     const String getOne(const char *recordId, const char *expand = nullptr, const char *fields = nullptr);
 
     /**
      * @brief Creates a single, new record in the Pocketbase collection.
      *
-     * @param jsonData The JSON data for the new record.
-     * @param id (Optional) The ID of the record. If not set, it will be auto-generated by Pocketbase.
-     * @param expand (Optional) A string specifying related fields to expand in the response.
-     * @param fields (Optional) A string specifying the fields to include in the response.
-     * @return A JSON string representing the created record if successful, an empty string otherwise.
+     * @param jsonData      The JSON data for the new record.
+     * @param id            (Optional) The ID of the record. If not set, it will be auto-generated by Pocketbase.
+     * @param expand        (Optional) A string specifying related fields to expand in the response.
+     * @param fields        (Optional) A string specifying the fields to include in the response.
+     *
+     * @return              A JSON string representing the created record if successful, an empty string otherwise.
      */
     const String create(const char *jsonData, const char *id = nullptr, const char *expand = nullptr, const char *fields = nullptr);
 
