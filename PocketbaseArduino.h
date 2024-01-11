@@ -8,7 +8,7 @@
 #define PocketbaseArduino_h
 
 #include <Arduino.h>
-#include "PocketBase.h" // Assuming you have a PocketBase Arduino library
+#include "PocketBaseArduino.h" // Assuming you have a PocketBase Arduino library
 
 /**
  *

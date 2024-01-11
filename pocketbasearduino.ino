@@ -1,5 +1,4 @@
 #include <ESP8266WiFi.h>
-#include <ESP32WiFi.h>
 #include "PocketbaseArduino.h"
 
 const char *ssid = "your_wifi_ssid";
