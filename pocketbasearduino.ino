@@ -1,38 +1,35 @@
 #include <ESP8266WiFi.h>
-#include "PocketbaseArduino.h"
+#include <ESP8266WebServer.h>
 
-const char *ssid = "your_wifi_ssid";
-const char *password = "your_wifi_password";
+// Replace with your network credentials
+const char *ssid = "dlink-3CCB";
+const char *password = "rvtbf69439";
 
-const char *BASE_URL = "http://127.0.0.1:8090";
+ESP8266WebServer server(80);
 
-PocketbaseArduino pocketBase(BASE_URL);
+void setup() {
+  Serial.begin(115200);
 
-void setup()
-{
-  Serial.begin(9600);
-
-  connectToWiFi();
-
-  String record = pocketBase.collection("posts").getOne("record");
-  Serial.println("Record: " + record);
-}
-
-void loop()
-{
-  // Your main loop code here
-}
-
-void connectToWiFi()
-{
-  Serial.println("Connecting to WiFi");
+  // Connect to Wi-Fi
   WiFi.begin(ssid, password);
-
-  while (WiFi.status() != WL_CONNECTED)
-  {
-    delay(1000);
-    Serial.println("Connecting to WiFi...");
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(250);
+    Serial.print(".");
   }
+  Serial.println("");
 
-  Serial.println("Connected to WiFi");
+  Serial.println("WiFi connected");
+
+  // Define HTTP route
+  server.on("/", HTTP_GET, []() {
+    server.send(200, "text/plain", "Hello, World!");
+  });
+
+  // Start server
+  server.begin();
+  Serial.println("HTTP server started");
+}
+
+void loop() {
+  server.handleClient();
 }

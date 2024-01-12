@@ -2,4 +2,6 @@
 test.ino
 pocketbasearduino.ino
 pb_data
+pb_migrations
 pocketbase.exe
+examples
