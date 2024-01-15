@@ -2,8 +2,7 @@
 #define PocketbaseArduino_h
 
 #include <Arduino.h>
-#include <string>              // Add this line for 'std::string'
-#include "PocketBaseArduino.h" // Assuming you have a PocketBase Arduino library
+#include "PocketBaseArduino.h"
 
 class PocketbaseArduino
 {
@@ -14,6 +13,8 @@ public:
 
 private:
     PocketBase pb;
+
+    String GETRequest(const String &url);
 };
 
 class PocketbaseArduinoException : public std::exception
@@ -27,15 +28,12 @@ public:
     }
 
 private:
-    std::string message; /**< The error message associated with the exception. */
+    std::string message;
 };
 
 class PocketbaseCollection
 {
 public:
-    PocketbaseCollection(PocketBase &pb, const char *collectionName)
-        : pb(pb), collectionName(collectionName) {}
-
     const String getList(
         unsigned int page = 1,
         unsigned int perPage = 30,
@@ -65,15 +63,13 @@ public:
         const char *expand = nullptr,
         const char *fields = nullptr);
 
-    // TODO: REFACTOR
-    const String update(const char *jsonData);
+    const String update(const char *jsonData, const char *recordId);
 
-    // TODO: REFACTOR
-    const String deleteRecord(const char *recordId, const char *filesToDelete[] = nullptr);
+    const String deleteRecord(const char *jsonData, const char *recordId, const char *filesToDelete[] = nullptr);
 
 private:
     PocketBase &pb;
     const char *collectionName;
-};
+}
 
 #endif

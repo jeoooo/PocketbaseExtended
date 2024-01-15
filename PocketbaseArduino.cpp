@@ -1,5 +1,6 @@
 #include "PocketbaseArduino.h"
-#include <ESP8266HTTPClient.h
+#include <ESP8266HTTPClient.h>
+#include <string>
 // PocketbaseArduino Implementation
 
 /**
