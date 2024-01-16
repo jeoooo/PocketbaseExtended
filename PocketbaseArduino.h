@@ -7,13 +7,11 @@
 class PocketbaseArduino
 {
 public:
-    PocketbaseArduino(const char *BASE_URL) : pb(BASE_URL) {}
+    PocketbaseArduino(const char *BASE_URL);
 
     PocketbaseCollection collection(const char *collectionName);
 
 private:
-    PocketBase pb;
-
     String GETRequest(const String &url);
 };
 
@@ -68,8 +66,7 @@ public:
     const String deleteRecord(const char *jsonData, const char *recordId, const char *filesToDelete[] = nullptr);
 
 private:
-    PocketBase &pb;
-    const char *collectionName;
+        const char *collectionName;
 }
 
 #endif
