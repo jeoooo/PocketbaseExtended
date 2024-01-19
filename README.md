@@ -25,4 +25,4 @@ TODO: Information on how others can contribute to your project.
 
 ## License
 
-TODO: Specify the license under which your project is distributed.
+GPL-3.0 license
