@@ -95,6 +95,7 @@ String PocketbaseArduino::httpsGETRequest(const char *endpoint)
     {
         Serial.printf("[HTTPS] Unable to connect\n");
     }
+    // TODO: improve return value in case failure happens
     return ""; // Return an empty string on failure
 }
 
@@ -146,6 +147,129 @@ String PocketbaseArduino::getOne(const char *recordId, const char *expand /* = n
     if (fields != nullptr && strlen(fields) > 0)
     {
         // Check if there's already a query string
+        if (fullEndpoint.indexOf('?') == -1)
+        {
+            fullEndpoint += "?";
+        }
+        else
+        {
+            fullEndpoint += "&";
+        }
+
+        fullEndpoint += "fields=" + String(fields);
+    }
+
+    if (base_url.startsWith("https://"))
+    {
+        return httpsGETRequest(fullEndpoint.c_str());
+    }
+    else
+    {
+        return httpGETRequest(fullEndpoint.c_str());
+    }
+}
+
+String PocketbaseArduino::getList(
+    const char *page /* = nullptr */,
+    const char *perPage /* = nullptr */,
+    const char *sort /* = nullptr */,
+    const char *filter /* = nullptr */,
+    const char *expand /* = nullptr */,
+    const char *fields /* = nullptr */,
+    const char *skipTotal /* = nullptr */)
+{
+    String fullEndpoint;
+
+    if (base_url.startsWith("https://"))
+    {
+        // Use HTTPS if base URL starts with "https://"
+        fullEndpoint = base_url + String(current_endpoint) + "records/";
+    }
+    else
+    {
+        // Use HTTP for other cases
+        fullEndpoint = base_url + String(current_endpoint) + "records/";
+    }
+
+    if (page != nullptr && strlen(page) > 0)
+    {
+
+        if (fullEndpoint.indexOf('?') == -1)
+        {
+            fullEndpoint += "?";
+        }
+        else
+        {
+            fullEndpoint += "&";
+        }
+
+        fullEndpoint += "page=" + String(page);
+    }
+
+    if (perPage != nullptr && strlen(perPage) > 0)
+    {
+        if (fullEndpoint.indexOf('?') == -1)
+        {
+            fullEndpoint += "?";
+        }
+        else
+        {
+            fullEndpoint += "&";
+        }
+
+        fullEndpoint += "perPage=" + String(perPage);
+    }
+
+    if (sort != nullptr && strlen(sort) > 0)
+    {
+        if (fullEndpoint.indexOf('?') == -1)
+        {
+            fullEndpoint += "?";
+        }
+        else
+        {
+            fullEndpoint += "&";
+        }
+
+        fullEndpoint += "perPage=" + String(sort);
+    }
+
+    if (filter != nullptr && strlen(filter) > 0)
+    {
+        if (fullEndpoint.indexOf('?') == -1)
+        {
+            fullEndpoint += "?";
+        }
+        else
+        {
+            fullEndpoint += "&";
+        }
+
+        fullEndpoint += "perPage=" + String(filter);
+    }
+
+    if (skipTotal != nullptr && strlen(skipTotal) > 0)
+    {
+        if (fullEndpoint.indexOf('?') == -1)
+        {
+            fullEndpoint += "?";
+        }
+        else
+        {
+            fullEndpoint += "&";
+        }
+
+        fullEndpoint += "perPage=" + String(skipTotal);
+    }
+
+    if (expand != nullptr && strlen(expand) > 0)
+    {
+        fullEndpoint += "?expand=" + String(expand);
+    }
+
+    if (fields != nullptr && strlen(fields) > 0)
+    {
+
         if (fullEndpoint.indexOf('?') == -1)
         {
             fullEndpoint += "?";
