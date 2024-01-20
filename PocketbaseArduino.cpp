@@ -42,8 +42,9 @@
  * Performs an HTTP GET request to the specified URL.
  *
  * @param url The URL to send the GET request to.
+ * @return The payload received from the server.
  */
-void httpGETRequest(const char *url)
+String httpGETRequest(const char *url)
 {
     // create an HTTPClient instance
     HTTPClient http;
@@ -68,6 +69,8 @@ void httpGETRequest(const char *url)
             {
                 String payload = http.getString();
                 Serial.println(payload);
+                http.end();
+                return payload;
             }
         }
         else
@@ -81,14 +84,17 @@ void httpGETRequest(const char *url)
     {
         Serial.printf("[HTTP] Unable to connect\n");
     }
+
+    return ""; // Return an empty string on failure
 }
 
 /**
  * Performs an HTTPS GET request to the specified URL.
  *
  * @param url The URL to send the GET request to.
+ * @return The payload received from the server.
  */
-void httpsGETRequest(const char *url)
+String httpsGETRequest(const char *url)
 {
     // create a WiFiClientSecure instance
     std::unique_ptr<BearSSL::WiFiClientSecure> client(new BearSSL::WiFiClientSecure);
@@ -119,6 +125,8 @@ void httpsGETRequest(const char *url)
             {
                 String payload = https.getString();
                 Serial.println(payload);
+                https.end();
+                return payload;
             }
         }
         else
@@ -132,48 +140,72 @@ void httpsGETRequest(const char *url)
     {
         Serial.printf("[HTTPS] Unable to connect\n");
     }
+
+    return ""; // Return an empty string on failure, MUST BE CHANGED
 }
 
-const String PocketbaseCollection::getFullList(
-    unsigned int page = 1,
-    unsigned int perPage = 30,
-    const char *sort = nullptr,
-    const char *filter = nullptr,
-    const char *expand = nullptr,
-    const char *fields = nullptr,
-    bool skipTotal = true)
+/**
+ * Fetch a single record from a Pocketbase Collection.
+ *
+ * @param recordId
+ * The Id of the Pocketbase record to be fetched.
+ * @param expand
+ * (Optional) Expand the record relation fields directly in the returned response without making additional requests.
+ * @param fields
+ * (Optional) Retrieve specific fields from a Pocketbase Collection
+ * @param skipTotal
+ * (Optional) If it is set the total counts query will be skipped and the response fields totalItems and totalPages will have -1 value.
+ * This could drastically speed up the search queries when the total counters are not needed or cursor based pagination is used.
+ *
+ *
+ * For more info about Pocketbase, see: https://pocketbase.io/docs
+ * @return The payload received from the server.
+ */
+const String PocketbaseCollection::getOne(const char *recordId, const char *expand, const char *fields, bool skipTotal)
 {
-    // TODO: Implement the function here
-}
+    String url = PocketbaseArduino.baseUrl + "/api/collections/" + collectionName + "/records/" + recordId;
 
-const String PocketbaseCollection::getList(
-    unsigned int page = 1,
-    unsigned int perPage = 30,
-    const char *sort = nullptr,
-    const char *filter = nullptr,
-    const char *expand = nullptr,
-    const char *fields = nullptr,
-    bool skipTotal = true)
-{
-    // TODO: Implement the function here
-}
+    // Add optional query parameters if provided
+    if (expand != nullptr || fields != nullptr || skipTotal)
+    {
+        url += "?";
 
-const String PocketbaseCollection::getOne(const char *recordId, const char *expand = nullptr, const char *fields = nullptr)
-{
-    // TODO: Implement the function here
-}
+        if (expand != nullptr)
+        {
+            url += "expand=" + String(expand);
+            if (fields != nullptr || skipTotal)
+            {
+                url += "&";
+            }
+        }
 
-const String PocketbaseCollection::create(const char *jsonData, const char *id = nullptr, const char *expand = nullptr, const char *fields = nullptr)
-{
-    // TODO: Implement the function here
-}
+        if (fields != nullptr)
+        {
+            url += "fields=" + String(fields);
+            if (skipTotal)
+            {
+                url += "&";
+            }
+        }
 
-const String PocketbaseCollection::update(const char *jsonData, const char *recordId)
-{
-    // TODO: Implement the function here
-}
+        if (skipTotal)
+        {
+            url += "skipTotal=true";
+        }
+    }
 
-const String PocketbaseCollection::deleteRecord(const char *jsonData, const char *recordId, const char *filesToDelete[] = nullptr)
-{
-    // TODO: Implement the function here
+    String result;
+    // Determine the protocol based on the baseUrl
+    String protocol = PocketbaseArduino.baseUrl.startsWith("https://") ? "https://" : "http://";
+
+    if (protocol == "http://")
+    {
+        result = httpGETRequest(url);
+    }
+    else
+    {
+        result = httpsGETRequest(url);
+    }
+
+    return result;
 }

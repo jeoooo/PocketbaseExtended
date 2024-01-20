@@ -9,64 +9,22 @@ class PocketbaseArduino
 public:
     PocketbaseArduino(const char *BASE_URL);
 
-    PocketbaseCollection collection(const char *collectionName);
+    PocketbaseArduinoCollection collection(const char *collectionName);
 
 private:
     String GETRequest(const String &url);
 };
 
-class PocketbaseArduinoException : public std::exception
+class PocketbaseArduinoCollection
 {
 public:
-    PocketbaseArduinoException(const int &message) : message(std::to_string(message)) {}
+    PocketbaseArduinoCollection(PocketbaseArduino &parent, const char *collectionName);
 
-    const char *what() const noexcept override
-    {
-        return whatMessage.c_str();
-    }
+    const String getOne(const char *recordId, const char *expand, const char *fields);
 
 private:
-    std::string message;
-};
-
-class PocketbaseCollection
-{
-public:
-    const String getList(
-        unsigned int page = 1,
-        unsigned int perPage = 30,
-        const char *sort = nullptr,
-        const char *filter = nullptr,
-        const char *expand = nullptr,
-        const char *fields = nullptr,
-        bool skipTotal = true);
-
-    const String getFullList(
-        unsigned int page = 1,
-        unsigned int perPage = 30,
-        const char *sort = nullptr,
-        const char *filter = nullptr,
-        const char *expand = nullptr,
-        const char *fields = nullptr,
-        bool skipTotal = true);
-
-    const String getOne(
-        const char *recordId,
-        const char *expand = nullptr,
-        const char *fields = nullptr);
-
-    const String create(
-        const char *jsonData,
-        const char *id = nullptr,
-        const char *expand = nullptr,
-        const char *fields = nullptr);
-
-    const String update(const char *jsonData, const char *recordId);
-
-    const String deleteRecord(const char *jsonData, const char *recordId, const char *filesToDelete[] = nullptr);
-
-private:
-        const char *collectionName;
+    const char *collectionName;
+    PocketbaseArduinoCollection &PocketbaseArduino;
 }
 
 #endif
