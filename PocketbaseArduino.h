@@ -1,30 +1,29 @@
+// PocketbaseArduino.h
+
 #ifndef PocketbaseArduino_h
 #define PocketbaseArduino_h
 
-#include <Arduino.h>
-#include "PocketBaseArduino.h"
+#include "Arduino.h"
+#include <ESP8266HTTPClient.h>
+
+#include <ESP8266WiFi.h>
+#include <ESP8266HTTPClient.h>
+#include <BearSSLHelpers.h>
 
 class PocketbaseArduino
 {
 public:
-    PocketbaseArduino(const char *BASE_URL);
+    PocketbaseArduino(const char *baseUrl); // Constructor
+    String httpGETRequest(const char *endpoint);
+    String httpsGETRequest(const char *endpoint);
 
-    PocketbaseArduinoCollection collection(const char *collectionName);
+    // Methods to build collection and record URLs
+    PocketbaseArduino &collection(const char *collection);
+    String getOne(const char *recordId);
 
 private:
-    String GETRequest(const String &url);
+    String base_url;
+    String current_endpoint;
 };
-
-class PocketbaseArduinoCollection
-{
-public:
-    PocketbaseArduinoCollection(PocketbaseArduino &parent, const char *collectionName);
-
-    const String getOne(const char *recordId, const char *expand, const char *fields);
-
-private:
-    const char *collectionName;
-    PocketbaseArduinoCollection &PocketbaseArduino;
-}
 
 #endif
