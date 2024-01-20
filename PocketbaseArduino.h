@@ -19,7 +19,7 @@ public:
 
     // Methods to build collection and record URLs
     PocketbaseArduino &collection(const char *collection);
-    String getOne(const char *recordId);
+    String getOne(const char *recordId, const char *expand /* = nullptr */, const char *fields /* = nullptr */);
 
 private:
     String base_url;

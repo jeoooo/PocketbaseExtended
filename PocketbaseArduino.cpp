@@ -104,7 +104,7 @@ PocketbaseArduino &PocketbaseArduino::collection(const char *collection)
     return *this;
 }
 
-String PocketbaseArduino::getOne(const char *recordId)
+String PocketbaseArduino::getOne(const char *recordId, const char *expand /* = nullptr */, const char *fields /* = nullptr */)
 {
     String fullEndpoint;
 
@@ -112,12 +112,41 @@ String PocketbaseArduino::getOne(const char *recordId)
     {
         // Use HTTPS if base URL starts with "https://"
         fullEndpoint = base_url + String(current_endpoint) + "records/" + recordId;
-        return httpsGETRequest(fullEndpoint.c_str());
     }
     else
     {
         // Use HTTP for other cases
         fullEndpoint = base_url + String(current_endpoint) + "records/" + recordId;
+    }
+
+    // Append the expand parameter if provided
+    if (expand != nullptr && strlen(expand) > 0)
+    {
+        fullEndpoint += "?expand=" + String(expand);
+    }
+
+    // Append the fields parameter if provided
+    if (fields != nullptr && strlen(fields) > 0)
+    {
+        // Check if there's already a query string
+        if (fullEndpoint.indexOf('?') == -1)
+        {
+            fullEndpoint += "?";
+        }
+        else
+        {
+            fullEndpoint += "&";
+        }
+
+        fullEndpoint += "fields=" + String(fields);
+    }
+
+    if (base_url.startsWith("https://"))
+    {
+        return httpsGETRequest(fullEndpoint.c_str());
+    }
+    else
+    {
         return httpGETRequest(fullEndpoint.c_str());
     }
 }
