@@ -15,102 +15,20 @@
 #include <WiFiClientSecure.h>
 #endif
 
-// ! must be removed in future updates
 PocketbaseArduino::PocketbaseArduino(const char *baseUrl)
 {
-    // Initialize base_url with the provided URL
     base_url = baseUrl;
 
-    // Ensure there is no trailing "/"
     if (base_url.endsWith("/"))
     {
-        base_url.remove(base_url.length() - 1); // Remove the trailing "/"
+        base_url.remove(base_url.length() - 1);
     }
 
-    // Append "/api/" to the base URL
     base_url += "/api/";
 
-    // Initialize current_endpoint
-    current_endpoint = base_url;
-}
-
-// ! must be removed in future updates
-String PocketbaseArduino::httpGETRequest(const char *endpoint)
-{
-
-    Serial.print("[HTTP] Full URL: ");
-    Serial.println(endpoint);
-
-    HTTPClient http;
-    Serial.print("[HTTP] begin...\n");
-    if (http.begin(endpoint))
-    {
-        Serial.print("[HTTP] GET...\n");
-        int httpCode = http.GET();
-        if (httpCode > 0)
-        {
-            Serial.printf("[HTTP] GET... code: %d\n", httpCode);
-            // if (httpCode == HTTP_CODE_OK || httpCode == HTTP_CODE_MOVED_PERMANENTLY)
-            if (httpCode)
-            {
-                String payload = http.getString();
-                // print request contents (must be removed)
-                Serial.println(payload);
-                http.end();
-                return payload;
-            }
-        }
-        // else
-        // {
-        //     Serial.printf("[HTTP] GET... failed, error: %s\n", http.errorToString(httpCode).c_str());
-        // }
-        http.end();
-    }
-    else
-    {
-        Serial.printf("[HTTP] Unable to connect\n");
-    }
-    return ""; // Return an empty string on failure
-}
-
-String PocketbaseArduino::httpsGETRequest(const char *endpoint)
-{
-    std::unique_ptr<BearSSL::WiFiClientSecure> client(new BearSSL::WiFiClientSecure);
-    client->setInsecure();
-    HTTPClient https;
-
-    Serial.print("[HTTPS] Full URL: ");
-    Serial.println(endpoint);
-
-    if (https.begin(*client, endpoint))
-    {
-        Serial.print("[HTTPS] GET...\n");
-        int httpCode = https.GET();
-        if (httpCode > 0)
-        {
-            Serial.printf("[HTTPS] GET... code: %d\n", httpCode);
-            // if (httpCode == HTTP_CODE_OK || httpCode == HTTP_CODE_MOVED_PERMANENTLY)
-            if (httpCode)
-            {
-                String payload = https.getString();
-                // print request contents (must be removed)
-                Serial.println(payload);
-                https.end();
-                return payload;
-            }
-        }
-        // else
-        // {
-        //     Serial.printf("[HTTPS] GET... failed, error: %s\n", https.errorToString(httpCode).c_str());
-        // }
-        https.end();
-    }
-    else
-    {
-        Serial.printf("[HTTPS] Unable to connect\n");
-    }
-    // TODO: improve return value in case failure happens
-    return ""; // Return an empty string on failure
+    current_endpoint = "";
+    expand_param = "";
+    fields_param = "";
 }
 
 String performGETRequest(const char *endpoint)
@@ -214,7 +132,7 @@ PocketbaseArduino &PocketbaseArduino::collection(const char *collection)
 /**
  *
  *
- * @brief `getOne()` - Fetches a single record from a Pocketbase collection
+ * @brief           `getOne()` - Fetches a single record from a Pocketbase collection
  *
  * @param recordId  The ID of the record to view.
  *
@@ -230,173 +148,37 @@ PocketbaseArduino &PocketbaseArduino::collection(const char *collection)
  *
  *                  For more information, see: https://pocketbase.io/docs
  */
-String PocketbaseArduino::getOne(const char *recordId, const char *expand /* = nullptr */, const char *fields /* = nullptr */)
+String PocketbaseArduino::getOne(const char *recordId)
 {
-    String fullEndpoint;
-
-    if (base_url.startsWith("https://"))
-    {
-        // Use HTTPS if base URL starts with "https://"
-        fullEndpoint = base_url + String(current_endpoint) + "records/" + recordId;
-    }
-    else
-    {
-        // Use HTTP for other cases
-        fullEndpoint = base_url + String(current_endpoint) + "records/" + recordId;
-    }
-
-    // Append the expand parameter if provided
-    if (expand != nullptr && strlen(expand) > 0)
-    {
-        fullEndpoint += "?expand=" + String(expand);
-    }
-
-    // Append the fields parameter if provided
-    if (fields != nullptr && strlen(fields) > 0)
-    {
-        // Check if there's already a query string
-        if (fullEndpoint.indexOf('?') == -1)
-        {
-            fullEndpoint += "?";
-        }
-        else
-        {
-            fullEndpoint += "&";
-        }
-
-        fullEndpoint += "fields=" + String(fields);
-    }
-
-    if (base_url.startsWith("https://"))
-    {
-
-        return performRequest(fullEndpoint.c_str());
-    }
-    else
-    {
-        return performRequest(fullEndpoint.c_str());
-    }
+    String fullEndpoint = buildFullEndpoint(recordId);
+    return performGETRequest(fullEndpoint.c_str());
 }
 
-String PocketbaseArduino::getList(
-    const char *page /* = nullptr */,
-    const char *perPage /* = nullptr */,
-    const char *sort /* = nullptr */,
-    const char *filter /* = nullptr */,
-    const char *expand /* = nullptr */,
-    const char *fields /* = nullptr */,
-    const char *skipTotal /* = nullptr */)
+PocketbaseArduino &PocketbaseArduino::expand(const char *expand)
 {
-    String fullEndpoint;
+    expand_param = (strlen(expand) > 0) ? "?expand=" + String(expand) : "";
+    return *this;
+}
 
-    if (base_url.startsWith("https://"))
+PocketbaseArduino &PocketbaseArduino::fields(const char *fields)
+{
+    fields_param = (strlen(fields) > 0) ? ((expand_param.length() > 0) ? "&fields=" : "?fields=") + String(fields) : "";
+    return *this;
+}
+
+String PocketbaseArduino::buildFullEndpoint(const char *recordId)
+{
+    String endpoint = base_url + String(current_endpoint) + "records/" + recordId;
+
+    if (!expand_param.isEmpty())
     {
-        // Use HTTPS if base URL starts with "https://"
-        fullEndpoint = base_url + String(current_endpoint) + "records/";
-    }
-    else
-    {
-        // Use HTTP for other cases
-        fullEndpoint = base_url + String(current_endpoint) + "records/";
-    }
-
-    if (page != nullptr && strlen(page) > 0)
-    {
-
-        if (fullEndpoint.indexOf('?') == -1)
-        {
-            fullEndpoint += "?";
-        }
-        else
-        {
-            fullEndpoint += "&";
-        }
-
-        fullEndpoint += "page=" + String(page);
+        endpoint += expand_param;
     }
 
-    if (perPage != nullptr && strlen(perPage) > 0)
+    if (!fields_param.isEmpty())
     {
-        if (fullEndpoint.indexOf('?') == -1)
-        {
-            fullEndpoint += "?";
-        }
-        else
-        {
-            fullEndpoint += "&";
-        }
-
-        fullEndpoint += "perPage=" + String(perPage);
+        endpoint += fields_param;
     }
 
-    if (sort != nullptr && strlen(sort) > 0)
-    {
-        if (fullEndpoint.indexOf('?') == -1)
-        {
-            fullEndpoint += "?";
-        }
-        else
-        {
-            fullEndpoint += "&";
-        }
-
-        fullEndpoint += "perPage=" + String(sort);
-    }
-
-    if (filter != nullptr && strlen(filter) > 0)
-    {
-        if (fullEndpoint.indexOf('?') == -1)
-        {
-            fullEndpoint += "?";
-        }
-        else
-        {
-            fullEndpoint += "&";
-        }
-
-        fullEndpoint += "perPage=" + String(filter);
-    }
-
-    if (skipTotal != nullptr && strlen(skipTotal) > 0)
-    {
-        if (fullEndpoint.indexOf('?') == -1)
-        {
-            fullEndpoint += "?";
-        }
-        else
-        {
-            fullEndpoint += "&";
-        }
-
-        fullEndpoint += "perPage=" + String(skipTotal);
-    }
-
-    if (expand != nullptr && strlen(expand) > 0)
-    {
-        fullEndpoint += "?expand=" + String(expand);
-    }
-
-    if (fields != nullptr && strlen(fields) > 0)
-    {
-
-        if (fullEndpoint.indexOf('?') == -1)
-        {
-            fullEndpoint += "?";
-        }
-        else
-        {
-            fullEndpoint += "&";
-        }
-
-        fullEndpoint += "fields=" + String(fields);
-    }
-
-    if (base_url.startsWith("https://"))
-    {
-        return performRequest(fullEndpoint.c_str());
-    }
-    else
-    {
-        return performRequest(fullEndpoint.c_str());
-    }
+    return endpoint;
 }
