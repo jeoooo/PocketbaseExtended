@@ -15,7 +15,6 @@
 #include <WiFiClientSecure.h>
 #endif
 
-// ! must be removed in future updates
 PocketbaseArduino::PocketbaseArduino(const char *baseUrl)
 {
     base_url = baseUrl;
