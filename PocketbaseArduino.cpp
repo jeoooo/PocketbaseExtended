@@ -15,6 +15,7 @@
 #include <WiFiClientSecure.h>
 #endif
 
+// ! must be removed in future updates
 PocketbaseArduino::PocketbaseArduino(const char *baseUrl)
 {
     base_url = baseUrl;
@@ -26,7 +27,7 @@ PocketbaseArduino::PocketbaseArduino(const char *baseUrl)
 
     base_url += "/api/";
 
-    current_endpoint = "";
+    current_endpoint = base_url;
     expand_param = "";
     fields_param = "";
 }
@@ -129,56 +130,92 @@ PocketbaseArduino &PocketbaseArduino::collection(const char *collection)
     return *this;
 }
 
-/**
- *
- *
- * @brief           `getOne()` - Fetches a single record from a Pocketbase collection
- *
- * @param recordId  The ID of the record to view.
- *
- * @param expand    (Optional) Auto expand record relations. Ex.:?expand=relField1,relField2.subRelField Supports up to 6-levels depth nested relations expansion.
- *                  The expanded relations will be appended to the record under the expand property (eg. "expand": {"relField1": {...}, ...}).
- *                  Only the relations to which the request user has permissions to view will be expanded.
- *
- * @param fields    (Optional) Comma separated string of the fields to return in the JSON response (by default returns all fields). Ex.: ?fields=*,expand.relField.name
- *                  * targets all keys from the specific depth level. In addition, the following field modifiers are also supported:
- *                  :excerpt(maxLength, withEllipsis?)
- *                  Returns a short plain text version of the field string value.
- *                  Ex.: ` ?fields=*,description:excerpt(200,true)`
- *
- *                  For more information, see: https://pocketbase.io/docs
- */
-String PocketbaseArduino::getOne(const char *recordId)
+String PocketbaseArduino::getOne(const char *recordId, const char *expand /* = nullptr */, const char *fields /* = nullptr */)
 {
-    String fullEndpoint = buildFullEndpoint(recordId);
+    String fullEndpoint = base_url + String(current_endpoint) + "records/" + recordId;
+
+    // Append the expand parameter if provided
+    if (expand != nullptr && strlen(expand) > 0)
+    {
+        fullEndpoint += "?expand=" + String(expand);
+    }
+
+    // Append the fields parameter if provided
+    if (fields != nullptr && strlen(fields) > 0)
+    {
+        // Check if there's already a query string
+        fullEndpoint += (fullEndpoint.indexOf('?') == -1) ? "?" : "&";
+        fullEndpoint += "fields=" + String(fields);
+    }
+
     return performGETRequest(fullEndpoint.c_str());
 }
 
-PocketbaseArduino &PocketbaseArduino::expand(const char *expand)
+String PocketbaseArduino::getList(
+    const char *page /* = nullptr */,
+    const char *perPage /* = nullptr */,
+    const char *sort /* = nullptr */,
+    const char *filter /* = nullptr */,
+    const char *skipTotal /* = nullptr */,
+    const char *expand /* = nullptr */,
+    const char *fields /* = nullptr */)
 {
-    expand_param = (strlen(expand) > 0) ? "?expand=" + String(expand) : "";
-    return *this;
-}
+    String fullEndpoint = base_url + String(current_endpoint) + "records/";
 
-PocketbaseArduino &PocketbaseArduino::fields(const char *fields)
-{
-    fields_param = (strlen(fields) > 0) ? ((expand_param.length() > 0) ? "&fields=" : "?fields=") + String(fields) : "";
-    return *this;
-}
-
-String PocketbaseArduino::buildFullEndpoint(const char *recordId)
-{
-    String endpoint = base_url + String(current_endpoint) + "records/" + recordId;
-
-    if (!expand_param.isEmpty())
+    // Append the expand parameter if provided
+    if (expand != nullptr && strlen(expand) > 0)
     {
-        endpoint += expand_param;
+        fullEndpoint += (fullEndpoint.indexOf('?') == -1) ? "?" : "&";
+        fullEndpoint += "?expand=" + String(expand);
     }
 
-    if (!fields_param.isEmpty())
+    // Append the fields parameter if provided
+    if (fields != nullptr && strlen(fields) > 0)
     {
-        endpoint += fields_param;
+        // Check if there's already a query string
+        fullEndpoint += (fullEndpoint.indexOf('?') == -1) ? "?" : "&";
+        fullEndpoint += "fields=" + String(fields);
     }
 
-    return endpoint;
+    // Append the page parameter if provided
+    if (page != nullptr && strlen(page) > 0)
+    {
+        // Check if there's already a query string
+        fullEndpoint += (fullEndpoint.indexOf('?') == -1) ? "?" : "&";
+        fullEndpoint += "page=" + String(page);
+    }
+
+    // Append the perPage parameter if provided
+    if (perPage != nullptr && strlen(perPage) > 0)
+    {
+        // Check if there's already a query string
+        fullEndpoint += (fullEndpoint.indexOf('?') == -1) ? "?" : "&";
+        fullEndpoint += "perPage=" + String(perPage);
+    }
+
+    // Append the sort parameter if provided
+    if (sort != nullptr && strlen(sort) > 0)
+    {
+        // Check if there's already a query string
+        fullEndpoint += (fullEndpoint.indexOf('?') == -1) ? "?" : "&";
+        fullEndpoint += "sort=" + String(sort);
+    }
+
+    // Append the skipTotal parameter if provided
+    if (skipTotal != nullptr && strlen(skipTotal) > 0)
+    {
+        // Check if there's already a query string
+        fullEndpoint += (fullEndpoint.indexOf('?') == -1) ? "?" : "&";
+        fullEndpoint += "skipTotal=" + String(skipTotal);
+    }
+
+    // Append the filter parameter if provided
+    if (filter != nullptr && strlen(filter) > 0)
+    {
+        // Check if there's already a query string
+        fullEndpoint += (fullEndpoint.indexOf('?') == -1) ? "?" : "&";
+        fullEndpoint += "skipTotal=" + String(filter);
+    }
+
+    return performGETRequest(fullEndpoint.c_str());
 }
