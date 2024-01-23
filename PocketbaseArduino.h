@@ -40,7 +40,8 @@ public:
         const char *recordId,
         const char *expand /* = nullptr */,
         const char *fields /* = nullptr */);
-    String deleteRecord(const char *recordId, );
+
+    String deleteRecord(const char *recordId);
 
     /**
      * @brief           Fetches a multiple records from a Pocketbase collection. Supports sorting and filtering.
@@ -81,10 +82,6 @@ public:
         const char *skipTotal /* = nullptr */,
         const char *expand /* = nullptr */,
         const char *fields /* = nullptr */);
-
-private:
-    String httpGETRequest(const char *endpoint);
-    String httpsGETRequest(const char *endpoint);
 
 private:
     String base_url;
