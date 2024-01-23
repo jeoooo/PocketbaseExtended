@@ -36,9 +36,10 @@ public:
      *
      *                  For more information, see: https://pocketbase.io/docs
      */
-    String getOne(const char *recordId);
-    PocketbaseArduino &expand(const char *expand);
-    PocketbaseArduino &fields(const char *fields);
+    String getOne(
+        const char *recordId,
+        const char *expand /* = nullptr */,
+        const char *fields /* = nullptr */);
 
     /**
      * @brief           Fetches a multiple records from a Pocketbase collection. Supports sorting and filtering.
@@ -71,12 +72,18 @@ public:
      *
      *                  For more information, see: https://pocketbase.io/docs
      */
+    String getList(
+        const char *page /* = nullptr */,
+        const char *perPage /* = nullptr */,
+        const char *sort /* = nullptr */,
+        const char *filter /* = nullptr */,
+        const char *skipTotal /* = nullptr */,
+        const char *expand /* = nullptr */,
+        const char *fields /* = nullptr */);
 
 private:
     String httpGETRequest(const char *endpoint);
     String httpsGETRequest(const char *endpoint);
-
-    String buildFullEndpoint(const char *recordId);
 
 private:
     String base_url;
