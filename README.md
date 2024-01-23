@@ -7,7 +7,7 @@
 
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 [![Open Source Love](https://badges.frapsoft.com/os/v1/open-source.svg?v=103)](https://opensource.org/)
-![Static Badge](https://img.shields.io/badge/version-v0.1.0-%2300969B?color=%2300969B&link=https%3A%2F%2Fgithub.com%2Fjeoooo%2FPocketbaseArduino%2Freleases)
+![Static Badge](https://img.shields.io/badge/version-v0.3.1-%2300969B?color=%2300969B&link=https%3A%2F%2Fgithub.com%2Fjeoooo%2FPocketbaseArduino%2Freleases)
 ![Static Badge](https://img.shields.io/badge/Pocketbase-Pocketbase?logo=pocketbase&logoColor=%23000&labelColor=%23fff&color=%23fff&link=https%3A%2F%2Fpocketbase.io%2F)
 ![Static Badge](https://img.shields.io/badge/Arduino-Arduino?logo=arduino&logoColor=%23fff&labelColor=%2300969B&color=%2300969B&link=https%3A%2F%2Fpocketbase.io%2F)
 </div>
