@@ -113,7 +113,7 @@ String PocketbaseArduino::httpsGETRequest(const char *endpoint)
     return ""; // Return an empty string on failure
 }
 
-String performRequest(const char *endpoint)
+String performGETRequest(const char *endpoint)
 {
 
 #if defined(ESP32)
