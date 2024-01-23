@@ -35,11 +35,74 @@ TODO: Instructions on how to install and set up your project.
 
 ## Usage
 
-TODO: Guidelines on how to use your project and any relevant examples.
+```cpp
+
+#include "PocketBaseArduino.h"
+
+// ESP8266
+#include <ESP8266WiFi.h>
+#include <ESP8266HTTPClient.h>
+
+// FOR ESP32
+// #include <HTTPClient.h>
+// #include <WiFi.h>
+// #include <WiFiClientSecure.h>
+
+// HTTPS REQUESTS
+#include <BearSSLHelpers.h>
+
+const char *ssid = "YOUR_SSID";
+const char *password = "YOUR_PASSWORD";
+
+// initializing the Pocketbase instance
+PocketbaseArduino pb("YOUR_POCKETBASE_BASE_URL");
+String record;
+
+void setup()
+{
+    Serial.begin(115200);
+    WiFi.begin(ssid, password);
+
+    while (WiFi.status() != WL_CONNECTED)
+    {
+        delay(1000);
+        Serial.println("Connecting to WiFi...");
+    }
+
+    // Initialize PocketbaseArduino with your base URL, supports both http and https
+    // PocketbaseArduino pb("https://jeo-pockethost-instance.pockethost.io");
+    // PocketbaseArduino pb("http://192.168.100.106:8090");
+
+    // Example usage of getOne function getOne("ckf93agrsjettfx", "expand", "fields"), if expand or fields are empty place nullptr
+    record = pb.collection("notes").getOne("ckf93agrsjettfx", "expand", "fields");
+
+    // Example usage of getOne function getList("page", "perPage", "sort", "filter", "skipTotal", "expand", "fields"), if expand or fields are empty place nullptr
+    record = pb.collection("notes").getList("page", "perPage", "sort", "filter", "skipTotal", "expand", "fields");
+
+    // Example usage of getOne function getOne("record_id");
+    record = pb.collection("notes").deleteRecord("record_id");
+
+    // printing data
+    Serial.println(record);
+}
+
+void loop()
+{
+    // Fetches and prints data from the 'notes' collection every 5 seconds
+    record = pb.collection("notes").getList("page", "perPage", "sort", "filter", "skipTotal", "expand", "fields");
+    Serial.println("Data from 'notes' collection:\n" + record);
+    delay(5000);
+}
+
+```
 
 ## Contributing
 
-TODO: Information on how others can contribute to your project.
+1.![Fork](https://github.com/jeoooo/PocketbaseArduino/fork) this Github repository.
+2. Create your feature branch (`git checkout -b my-new-feature`).
+3. Commit your changes (`git commit -am 'Add some feature`)
+4. Push to the branch (`git push origin my-new-feature`)
+5. Create a ![pull request](https://github.com/jeoooo/PocketbaseArduino/pulls)
 
 ## License
 
