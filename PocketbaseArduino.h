@@ -40,6 +40,7 @@ public:
         const char *recordId,
         const char *expand /* = nullptr */,
         const char *fields /* = nullptr */);
+    String deleteRecord(const char *recordId, );
 
     /**
      * @brief           Fetches a multiple records from a Pocketbase collection. Supports sorting and filtering.
@@ -50,8 +51,8 @@ public:
      *
      * @param sort      Specify the records order attribute(s).
      *                  Add - / + (default) in front of the attribute for DESC / ASC order. Ex.:
-     *                  // DESC by created and ASC by id
-     *                  ?sort=-created,id
+     *                  `DESC by created and ASC by id`
+     *                  `?sort=-created,id`
      *
      * @param filter    Filter the returned records.
      *

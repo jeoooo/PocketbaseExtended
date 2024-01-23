@@ -118,6 +118,7 @@ String performGETRequest(const char *endpoint)
         {
             Serial.printf("[HTTP] Unable to connect\n");
         }
+        // TODO: improve return value in case failure happens
         return ""; // Return an empty string on failure
     }
 #endif
