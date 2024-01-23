@@ -214,7 +214,7 @@ PocketbaseArduino &PocketbaseArduino::collection(const char *collection)
 /**
  *
  *
- * @brief `getOne()` - Fetches a single record from a Pocketbase collection
+ * @brief           `getOne()` - Fetches a single record from a Pocketbase collection
  *
  * @param recordId  The ID of the record to view.
  *
@@ -232,18 +232,7 @@ PocketbaseArduino &PocketbaseArduino::collection(const char *collection)
  */
 String PocketbaseArduino::getOne(const char *recordId, const char *expand /* = nullptr */, const char *fields /* = nullptr */)
 {
-    String fullEndpoint;
-
-    if (base_url.startsWith("https://"))
-    {
-        // Use HTTPS if base URL starts with "https://"
-        fullEndpoint = base_url + String(current_endpoint) + "records/" + recordId;
-    }
-    else
-    {
-        // Use HTTP for other cases
-        fullEndpoint = base_url + String(current_endpoint) + "records/" + recordId;
-    }
+    String fullEndpoint = base_url + String(current_endpoint) + "records/" + recordId;
 
     // Append the expand parameter if provided
     if (expand != nullptr && strlen(expand) > 0)
@@ -255,148 +244,9 @@ String PocketbaseArduino::getOne(const char *recordId, const char *expand /* = n
     if (fields != nullptr && strlen(fields) > 0)
     {
         // Check if there's already a query string
-        if (fullEndpoint.indexOf('?') == -1)
-        {
-            fullEndpoint += "?";
-        }
-        else
-        {
-            fullEndpoint += "&";
-        }
-
+        fullEndpoint += (fullEndpoint.indexOf('?') == -1) ? "?" : "&";
         fullEndpoint += "fields=" + String(fields);
     }
 
-    if (base_url.startsWith("https://"))
-    {
-
-        return performRequest(fullEndpoint.c_str());
-    }
-    else
-    {
-        return performRequest(fullEndpoint.c_str());
-    }
-}
-
-String PocketbaseArduino::getList(
-    const char *page /* = nullptr */,
-    const char *perPage /* = nullptr */,
-    const char *sort /* = nullptr */,
-    const char *filter /* = nullptr */,
-    const char *expand /* = nullptr */,
-    const char *fields /* = nullptr */,
-    const char *skipTotal /* = nullptr */)
-{
-    String fullEndpoint;
-
-    if (base_url.startsWith("https://"))
-    {
-        // Use HTTPS if base URL starts with "https://"
-        fullEndpoint = base_url + String(current_endpoint) + "records/";
-    }
-    else
-    {
-        // Use HTTP for other cases
-        fullEndpoint = base_url + String(current_endpoint) + "records/";
-    }
-
-    if (page != nullptr && strlen(page) > 0)
-    {
-
-        if (fullEndpoint.indexOf('?') == -1)
-        {
-            fullEndpoint += "?";
-        }
-        else
-        {
-            fullEndpoint += "&";
-        }
-
-        fullEndpoint += "page=" + String(page);
-    }
-
-    if (perPage != nullptr && strlen(perPage) > 0)
-    {
-        if (fullEndpoint.indexOf('?') == -1)
-        {
-            fullEndpoint += "?";
-        }
-        else
-        {
-            fullEndpoint += "&";
-        }
-
-        fullEndpoint += "perPage=" + String(perPage);
-    }
-
-    if (sort != nullptr && strlen(sort) > 0)
-    {
-        if (fullEndpoint.indexOf('?') == -1)
-        {
-            fullEndpoint += "?";
-        }
-        else
-        {
-            fullEndpoint += "&";
-        }
-
-        fullEndpoint += "perPage=" + String(sort);
-    }
-
-    if (filter != nullptr && strlen(filter) > 0)
-    {
-        if (fullEndpoint.indexOf('?') == -1)
-        {
-            fullEndpoint += "?";
-        }
-        else
-        {
-            fullEndpoint += "&";
-        }
-
-        fullEndpoint += "perPage=" + String(filter);
-    }
-
-    if (skipTotal != nullptr && strlen(skipTotal) > 0)
-    {
-        if (fullEndpoint.indexOf('?') == -1)
-        {
-            fullEndpoint += "?";
-        }
-        else
-        {
-            fullEndpoint += "&";
-        }
-
-        fullEndpoint += "perPage=" + String(skipTotal);
-    }
-
-    if (expand != nullptr && strlen(expand) > 0)
-    {
-        fullEndpoint += "?expand=" + String(expand);
-    }
-
-    if (fields != nullptr && strlen(fields) > 0)
-    {
-
-        if (fullEndpoint.indexOf('?') == -1)
-        {
-            fullEndpoint += "?";
-        }
-        else
-        {
-            fullEndpoint += "&";
-        }
-
-        fullEndpoint += "fields=" + String(fields);
-    }
-
-    if (base_url.startsWith("https://"))
-    {
-        return performRequest(fullEndpoint.c_str());
-    }
-    else
-    {
-        return performRequest(fullEndpoint.c_str());
-    }
+    return performGETRequest(fullEndpoint.c_str());
 }
