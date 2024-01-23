@@ -73,13 +73,18 @@ void setup()
     // PocketbaseArduino pb("https://jeo-pockethost-instance.pockethost.io");
     // PocketbaseArduino pb("http://192.168.100.106:8090");
 
-    // Example usage of getOne function getOne("ckf93agrsjettfx", "expand", "fields"), if expand or fields are empty place nullptr
+    // Example usage of getOne() function 
+    // getOne("ckf93agrsjettfx", "expand", "fields"), 
+    // if expand or fields are empty place nullptr
     record = pb.collection("notes").getOne("ckf93agrsjettfx", "expand", "fields");
 
-    // Example usage of getOne function getList("page", "perPage", "sort", "filter", "skipTotal", "expand", "fields"), if expand or fields are empty place nullptr
+    // Example usage of getList() function 
+    // getList("page", "perPage", "sort", "filter", "skipTotal", "expand", "fields"), 
+    // if expand or fields are empty place nullptr
     record = pb.collection("notes").getList("page", "perPage", "sort", "filter", "skipTotal", "expand", "fields");
 
-    // Example usage of getOne function getOne("record_id");
+    // Example usage of deleteRecord function
+    // deleteRecord("record_id");
     record = pb.collection("notes").deleteRecord("record_id");
 
     // printing data
