@@ -19,7 +19,7 @@ public:
     PocketbaseArduino &collection(const char *collection);
 
     /**
-     * @brief Fetches a single record from a Pocketbase collection
+     * @brief           Fetches a single record from a Pocketbase collection
      *
      * @param recordId  The ID of the record to view.
      *
@@ -41,6 +41,13 @@ public:
         const char *expand /* = nullptr */,
         const char *fields /* = nullptr */);
 
+    /**
+     * @brief           Deletes a single record from a Pocketbase collection
+     *
+     * @param recordId  The ID of the record to delete.
+     *
+     *                  For more information, see: https://pocketbase.io/docs
+     */
     String deleteRecord(const char *recordId);
 
     /**

@@ -54,7 +54,7 @@ TODO: Instructions on how to install and set up your project.
 const char *ssid = "YOUR_SSID";
 const char *password = "YOUR_PASSWORD";
 
-// initializing the Pocketbase instance
+// Initializing the Pocketbase instance
 PocketbaseArduino pb("YOUR_POCKETBASE_BASE_URL");
 String record;
 
@@ -69,23 +69,19 @@ void setup()
         Serial.println("Connecting to WiFi...");
     }
 
-    // Initialize PocketbaseArduino with your base URL, supports both http and https
-    // PocketbaseArduino pb("https://jeo-pockethost-instance.pockethost.io");
-    // PocketbaseArduino pb("http://192.168.100.106:8090");
-
     // Example usage of getOne() function 
-    // getOne("ckf93agrsjettfx", "expand", "fields"), 
+    // getOne("record_id", "expand", "fields"), 
     // if expand or fields are empty place nullptr
-    record = pb.collection("notes").getOne("ckf93agrsjettfx", "expand", "fields");
+    record = pb.collection("collection_name").getOne("record_id", "expand", "fields");
 
     // Example usage of getList() function 
     // getList("page", "perPage", "sort", "filter", "skipTotal", "expand", "fields"), 
     // if expand or fields are empty place nullptr
-    record = pb.collection("notes").getList("page", "perPage", "sort", "filter", "skipTotal", "expand", "fields");
+    record = pb.collection("collection_name").getList("page", "perPage", "sort", "filter", "skipTotal", "expand", "fields");
 
     // Example usage of deleteRecord function
     // deleteRecord("record_id");
-    record = pb.collection("notes").deleteRecord("record_id");
+    record = pb.collection("collection_name").deleteRecord("record_id");
 
     // printing data
     Serial.println(record);
@@ -94,7 +90,7 @@ void setup()
 void loop()
 {
     // Fetches and prints data from the 'notes' collection every 5 seconds
-    record = pb.collection("notes").getList("page", "perPage", "sort", "filter", "skipTotal", "expand", "fields");
+    record = pb.collection("collection_name").getList("page", "perPage", "sort", "filter", "skipTotal", "expand", "fields");
     Serial.println("Data from 'notes' collection:\n" + record);
     delay(5000);
 }
@@ -103,11 +99,11 @@ void loop()
 
 ## Contributing
 
-1.![Fork](https://github.com/jeoooo/PocketbaseArduino/fork) this Github repository.
+1.[Fork](https://github.com/jeoooo/PocketbaseArduino/fork) this Github repository.
 2. Create your feature branch (`git checkout -b my-new-feature`).
 3. Commit your changes (`git commit -am 'Add some feature`)
 4. Push to the branch (`git push origin my-new-feature`)
-5. Create a ![pull request](https://github.com/jeoooo/PocketbaseArduino/pulls)
+5. Create a [pull request](https://github.com/jeoooo/PocketbaseArduino/pulls)
 
 ## License
 
