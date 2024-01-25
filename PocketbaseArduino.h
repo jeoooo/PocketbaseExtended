@@ -90,6 +90,8 @@ public:
         const char *expand /* = nullptr */,
         const char *fields /* = nullptr */);
 
+    String create(const std::unordered_map<String, String> &params);
+
 private:
     String base_url;
     String current_endpoint;

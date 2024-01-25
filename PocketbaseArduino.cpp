@@ -5,6 +5,7 @@
 // #include <ESP8266WiFi.h>
 // #include <ESP8266HTTPClient.h>
 // #include <BearSSLHelpers.h>
+#include <ArduinoJson.h>
 
 #if defined(ESP8266)
 #include <ESP8266HTTPClient.h>
@@ -217,6 +218,64 @@ String performDELETERequest(const char *endpoint)
 #endif
 }
 
+String performPOSTRequest(const char *endpoint, const std::unordered_map<String, String> &params)
+{
+#if defined(ESP32)
+    // ESP32 implementation
+    // ...
+#elif defined(ESP8266)
+    std::unique_ptr<BearSSL::WiFiClientSecure> client(new BearSSL::WiFiClientSecure);
+    client->setInsecure();
+    HTTPClient http;
+
+    Serial.print("[HTTPS] Full URL: ");
+    Serial.println(endpoint);
+
+    if (http.begin(*client, endpoint))
+    {
+        Serial.print("[HTTPS] POST...\n");
+
+        // Create a JSON object to hold the parameters
+        DynamicJsonDocument jsonBody(1024); // Adjust the capacity based on your needs
+
+        for (const auto &param : params)
+        {
+            jsonBody[param.first] = param.second;
+        }
+
+        // Serialize the JSON object to a string
+        String requestBody;
+        serializeJson(jsonBody, requestBody);
+
+        int httpCode = http.POST(requestBody);
+        if (httpCode > 0)
+        {
+            Serial.printf("[HTTPS] POST... code: %d\n", httpCode);
+            if (httpCode)
+            {
+                String payload = http.getString();
+                Serial.println(payload);
+                http.end();
+                return payload;
+            }
+        }
+        else
+        {
+            Serial.printf("[HTTPS] POST... failed, error: %s\n", http.errorToString(httpCode).c_str());
+        }
+
+        http.end();
+    }
+    else
+    {
+        Serial.printf("[HTTPS] Unable to connect\n");
+    }
+
+    // TODO: improve return value in case of failure
+    return ""; // Return an empty string on failure
+#endif
+}
+
 PocketbaseArduino &PocketbaseArduino::collection(const char *collection)
 {
     current_endpoint = "collections/" + String(collection) + "/";
@@ -318,4 +377,13 @@ String PocketbaseArduino::deleteRecord(const char *recordId)
     String fullEndpoint = base_url + String(current_endpoint) + "records/" + recordId;
 
     return performDELETERequest(fullEndpoint.c_str());
+}
+
+String PocketbaseArduino::create(const std::unordered_map<String, String> &params)
+{
+    // Construct the endpoint based on the current_endpoint
+    String fullEndpoint = current_endpoint + "records/";
+
+    // Call performPOSTRequest with the constructed endpoint and provided parameters
+    return performPOSTRequest(fullEndpoint.c_str(), params);
 }
