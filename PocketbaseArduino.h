@@ -4,10 +4,11 @@
 #define PocketbaseArduino_h
 
 #include "Arduino.h"
-#include <ESP8266HTTPClient.h>
 
+#include <ESP8266HTTPClient.h>
 #include <ESP8266WiFi.h>
 #include <ESP8266HTTPClient.h>
+
 #include <BearSSLHelpers.h>
 
 class PocketbaseArduino
@@ -90,7 +91,7 @@ public:
         const char *expand /* = nullptr */,
         const char *fields /* = nullptr */);
 
-    String create(const std::unordered_map<String, String> &params);
+    String create(const String &requestBody);
 
 private:
     String base_url;
