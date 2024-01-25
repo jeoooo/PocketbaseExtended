@@ -378,3 +378,12 @@ String PocketbaseArduino::deleteRecord(const char *recordId)
 
     return performDELETERequest(fullEndpoint.c_str());
 }
+
+String PocketbaseArduino::create(const std::unordered_map<String, String> &params)
+{
+    // Construct the endpoint based on the current_endpoint
+    String fullEndpoint = current_endpoint + "records/";
+
+    // Call performPOSTRequest with the constructed endpoint and provided parameters
+    return performPOSTRequest(fullEndpoint.c_str(), params);
+}
