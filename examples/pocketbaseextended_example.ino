@@ -1,5 +1,5 @@
 /*
-    example.ino
+    pbaseextended.ino
 
     Example of using the PocketbaseExtended Library for Arduino.
 
