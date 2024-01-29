@@ -1,4 +1,17 @@
-#include "PocketBaseArduino.h"
+/*
+    example.ino
+
+    Example of using the PocketbaseExtended Library for Arduino.
+
+    Created 20 January 2024
+    By Jeo Carlo Lubao
+    Modified 29 January 2024
+    By Jeo Carlo Lubao
+
+    https://github.com/jeoooo/PocketbaseExtended
+
+*/
+#include <PocketbaseExtended.h>
 
 // ESP8266
 #include <ESP8266WiFi.h>
