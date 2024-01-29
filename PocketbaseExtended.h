@@ -1,7 +1,7 @@
-// PocketbaseArduino.h
+// PocketbaseExtended.h
 
-#ifndef PocketbaseArduino_h
-#define PocketbaseArduino_h
+#ifndef PocketbaseExtended_h
+#define PocketbaseExtended_h
 
 #include "Arduino.h"
 
@@ -11,13 +11,13 @@
 
 #include <BearSSLHelpers.h>
 
-class PocketbaseArduino
+class PocketbaseExtended
 {
 public:
-    PocketbaseArduino(const char *baseUrl); // Constructor
+    PocketbaseExtended(const char *baseUrl); // Constructor
 
     // Methods to build collection and record URLs
-    PocketbaseArduino &collection(const char *collection);
+    PocketbaseExtended &collection(const char *collection);
 
     /**
      * @brief           Fetches a single record from a Pocketbase collection
