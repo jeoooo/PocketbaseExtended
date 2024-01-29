@@ -1,6 +1,6 @@
 // PocketbaseArduino.cpp
 
-#include "PocketbaseArduino.h"
+#include "PocketbaseExtended.h"
 // #include <ESP8266HTTPClient.h>
 // #include <ESP8266WiFi.h>
 // #include <ESP8266HTTPClient.h>
