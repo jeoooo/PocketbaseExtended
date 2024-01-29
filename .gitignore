@@ -4,7 +4,6 @@ pocketbasearduino.ino
 pb_data
 pb_migrations
 pocketbase.exe
-examples
 CHANGELOG.md
 LICENSE.md
 pocketbase_0.20.5_windows_amd64.zip
