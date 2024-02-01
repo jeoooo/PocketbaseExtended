@@ -24,14 +24,20 @@ Arduino ESP8266/ESP32 Wrapper Library for Pocketbase
 
 - [PocketbaseArduino](#pocketbasearduino)
   - [Table of Contents](#table-of-contents)
-  - [Installation](#installation)
+  - [Dependencies](#dependencies)
   - [Usage](#usage)
   - [Contributing](#contributing)
   - [License](#license)
 
-## Installation
+## Dependencies
 
-TODO: Instructions on how to install and set up your project.
+- ArduinoJSON
+- ESP8266WiFi Library
+- ESP8266HTTPClient
+- BearSSLHelpers (For Https Requests)
+- HTTPClient
+- WiFi
+- WiFiClientSecure
 
 ## Usage
 
