@@ -1,6 +1,6 @@
-// PocketbaseArduino.cpp
+// PocketbaseExtended.cpp
 
-#include "PocketbaseArduino.h"
+#include "PocketbaseExtended.h"
 // #include <ESP8266HTTPClient.h>
 // #include <ESP8266WiFi.h>
 // #include <ESP8266HTTPClient.h>
@@ -15,7 +15,7 @@
 #include <WiFiClientSecure.h>
 #endif
 
-PocketbaseArduino::PocketbaseArduino(const char *baseUrl)
+PocketbaseExtended::PocketbaseExtended(const char *baseUrl)
 {
     base_url = baseUrl;
 
@@ -31,7 +31,7 @@ PocketbaseArduino::PocketbaseArduino(const char *baseUrl)
     fields_param = "";
 }
 
-PocketbaseArduino &PocketbaseArduino::collection(const char *collection)
+PocketbaseExtended &PocketbaseExtended::collection(const char *collection)
 {
     current_endpoint = "collections/" + String(collection) + "/";
     return *this;
@@ -269,7 +269,7 @@ String performPOSTRequest(const char *endpoint, const String &requestBody)
 #endif
 }
 
-String PocketbaseArduino::getOne(const char *recordId, const char *expand /* = nullptr */, const char *fields /* = nullptr */)
+String PocketbaseExtended::getOne(const char *recordId, const char *expand /* = nullptr */, const char *fields /* = nullptr */)
 {
     String fullEndpoint = base_url + String(current_endpoint) + "records/" + recordId;
 
@@ -290,7 +290,7 @@ String PocketbaseArduino::getOne(const char *recordId, const char *expand /* = n
     return performGETRequest(fullEndpoint.c_str());
 }
 
-String PocketbaseArduino::getList(
+String PocketbaseExtended::getList(
     const char *page /* = nullptr */,
     const char *perPage /* = nullptr */,
     const char *sort /* = nullptr */,
@@ -359,14 +359,14 @@ String PocketbaseArduino::getList(
     return performGETRequest(fullEndpoint.c_str());
 }
 
-String PocketbaseArduino::deleteRecord(const char *recordId)
+String PocketbaseExtended::deleteRecord(const char *recordId)
 {
     String fullEndpoint = base_url + String(current_endpoint) + "records/" + recordId;
 
     return performDELETERequest(fullEndpoint.c_str());
 }
 
-String PocketbaseArduino::create(const String &requestBody)
+String PocketbaseExtended::create(const String &requestBody)
 {
     // Construct the endpoint based on the current_endpoint
     String fullEndpoint = current_endpoint + "records/";

@@ -16,6 +16,10 @@ class PocketbaseExtended
 public:
     PocketbaseExtended(const char *baseUrl); // Constructor
 
+    // String performGETRequest(const char *endpoint);
+    // String performDELETERequest(const char *endpoint);
+    // String performPOSTRequest(const char *endpoint, const String &requestBody);
+
     // Methods to build collection and record URLs
     PocketbaseExtended &collection(const char *collection);
 

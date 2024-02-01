@@ -29,7 +29,7 @@ const char *ssid = "YOUR_SSID";
 const char *password = "YOUR_PASSWORD";
 
 // Initializing the Pocketbase instance
-PocketbaseArduino pb("YOUR_POCKETBASE_BASE_URL");
+PocketbaseExtended pb("YOUR_POCKETBASE_BASE_URL");
 String record;
 
 void setup()
